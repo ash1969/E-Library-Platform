@@ -1,0 +1,28 @@
+{% extends 'user_profile/base.html' %}
+
+{% block content %}
+<body>
+        <center><h4>{{ profile.first_name }}'s Library Card</h4></center>
+        <div class="container-fluid" style="padding: 30px">
+        <div class="row">
+             <ul>
+                 <li>{{ profile.first_name }}&nbsp;{{ profile.last_name }}</li>
+                 <li><small>@{{ profile.user }}</small></li>
+             </ul>
+        </div>
+             <hr>
+             <ul>
+                 <li>Roll Number:  {{ profile.roll_number }}</li>
+                 <li> Registration Number: {{ profile.registration_number }}</li>
+                 <li>Hall Number: {{ profile.hall_number }}</li>
+                 <li>Room Number: {{ profile.room_number }}</li>
+                 <li>Mobile Number: {{ profile.mobile }}</li>
+             </ul>
+             {% if request.user.id == profile.id %}
+             <a href="{% url 'user_profile:edit_profile'%}">Edit Library Card</a>
+             {% endif %}
+         </div>
+         </div>
+
+</body>
+{% endblock %}

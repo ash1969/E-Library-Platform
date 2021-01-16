@@ -1,0 +1,20 @@
+{% extends 'user_profile/base.html' %}
+
+{% block title %}
+E-Library Card
+{% endblock %}
+
+{% block content %}
+<div align="center">
+     <br>
+        <form method="POST">
+          {% csrf_token %}
+          <table>
+              {{ form }}
+          </table>
+              <br>
+          <button type="submit" class="save btn btn-primary" style="margin-left:150px;"> Submit > </button>
+        </form>
+</div>
+
+{% endblock %}
