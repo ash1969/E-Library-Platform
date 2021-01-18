@@ -1,7 +1,7 @@
 {% extends 'user_profile/base.html' %}
 
 {% block title %}
-E-Library Card
+Login
 {% endblock %}
 
 {% block content %}
@@ -13,9 +13,9 @@ E-Library Card
               {{ form }}
           </table>
               <br>
-          <button type="submit" class="save btn btn-primary" style="margin-left:150px;"> Submit > </button>
+          <button type="submit" class="save btn btn-primary" style="margin-left:150px;"> SIGN IN > </button>
+          <a href="{% url 'user_profile:password_reset'%}">Forgot password</a>
         </form>
-        <p><a href="{% url 'user_profile:change_password' %}">Change Your Password</a></p>
 </div>
 
 {% endblock %}

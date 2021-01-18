@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'phonenumber_field'
+    'phonenumber_field',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
@@ -101,6 +102,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGIN_URL = 'login'
+LOGOUT_URL = 'logout'
+LOGOUT_REDIRECT_URL = 'login'
+LOGIN_REDIRECT_URL = 'user_profile:view_profile'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/

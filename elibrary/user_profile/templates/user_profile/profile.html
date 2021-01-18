@@ -19,7 +19,7 @@
                  <li>Mobile Number: {{ profile.mobile }}</li>
              </ul>
              {% if request.user.id == profile.id %}
-             <a href="{% url 'user_profile:edit_profile'%}">Edit Library Card</a>
+             <a href="{% url 'user_profile:edit_profile'%}">Personal & Privacy Settings</a>
              {% endif %}
          </div>
          </div>

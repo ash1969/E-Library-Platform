@@ -1,39 +1,20 @@
 from django.shortcuts import render, redirect,get_object_or_404, get_list_or_404
-from .models import *
-from django.http import HttpResponse, HttpResponseRedirect
-from django.urls import reverse
-from django.template import loader, RequestContext
+from django.http import HttpResponse
 from .forms import *
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm
-from django.views.decorators.csrf import csrf_exempt
-from django.conf import settings
-from django.forms import modelformset_factory
-from django.contrib.auth.forms import UserCreationForm
-from itertools import chain
-from django.core.files.base import ContentFile
-from io import BytesIO
-import urllib.request
 from django.contrib.sites.shortcuts import get_current_site
-from django.shortcuts import render, redirect
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode
 from django.template.loader import render_to_string
 from .tokens import account_activation_token
 from .tokens import password_reset_token
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes, force_text
+from django.utils.encoding import force_bytes
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.models import *
-import random
-import random
-import string
 
 # Create your views here.
 
@@ -114,3 +95,75 @@ def view_profile(request):
         return HttpResponse("User has not created a Profile yet!")
     args = {'profile': profile, }
     return render(request, 'user_profile/profile.html', args)
+
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('user_profile:edit_profile')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'user_profile/change_password.html', {
+        'form': form
+    })
+
+
+def password_reset(request):
+    form = EmailForm(request.POST or None)
+    if request.method == 'POST':
+        if request.POST.get('ajax_check') == "True":
+            if form.is_valid():
+                email = form.cleaned_data['email']
+                if not User.objects.filter(email=email).exists():
+                    return HttpResponse("No user with that Email exists.")
+                user = User.objects.get(email=email)
+                user.save()
+                current_site = get_current_site(request)
+                subject = 'Reset Your NIT Durgapur Central Library Account Password'
+                message = render_to_string('user_profile/password_reset_email.html', {
+                    'user': user,
+                    'domain': current_site.domain,
+                    'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                    'token': password_reset_token.make_token(user),
+                })
+                user.email_user(subject, message)
+                return HttpResponse("We've emailed you instructions for setting your password, if an account exists with the email you entered! You should receive them shortly."
+                                  "If you don't receive an email, please make sure you've entered the address you registered with, and check your spam folder.")
+            form = EmailForm(None)
+            return HttpResponse('Invalid')
+    return render(request, 'user_profile/password_reset_form.html', {'form': form})
+
+
+def password_reset_done(request):
+    return render(request, 'user_profile/password_reset_done.html')
+
+
+def password_reset_confirm(request, uidb64, token, backend='django.contrib.auth.backends.ModelBackend'):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and account_activation_token.check_token(user, token):
+        form = SetPasswordForm(user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            user.is_active = True
+            user.save()
+            return redirect('login')
+        return render(request, 'user_profile/password_reset_confirm.html', {'form': form})
+    else:
+        return render(request, 'user_profile/password_reset_invalid.html')
+
+
+def password_reset_complete(request):
+    return render(request, 'user_profile/password_reset_complete.html')
