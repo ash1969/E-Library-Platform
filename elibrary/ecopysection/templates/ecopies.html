@@ -1,0 +1,46 @@
+{% extends 'user_profile/base.html' %}
+{% block title %}E-Copy Section{% endblock %}
+{% csrf_token %}
+{% block content %}
+<h6>{{ count }} Books Found</h6>
+<div class="container">
+      <div class="row">
+          <div class="col-lg-9 col-sm-12 mt-2">
+            <div class="card ml-0">
+              <ul>
+                  <div class="ml-0 mr-0">
+                      <div>
+                          {% for ecopy in ecopies %}
+                            <li>
+                                <ul>
+                                    <div>
+                                            <ul>
+                                                <li>Title: {{ ecopy.title }}</li>
+                                                {% if ecopy.author %}
+                                                    <li>Author: {{ ecopy.author }}</li>
+                                                {% endif %}
+                                                {% if ecopy.description %}
+                                                    <li>Description: {{ ecopy.description }}</li>
+                                                {% endif %}
+                                                {% if ecopy.department %}
+                                                    <li>Book Type: {{ ecopy.department }}</li>
+                                                {% endif %}
+                                                {% if ecopy.type %}
+                                                    <li>Book Type: {{ ecopy.type }}</li>
+                                                {% endif %}
+                                                <li><a href="{{ ecopy.external_link }}" target="_blank">Read</a></li>
+                                            </ul>
+                                    </div>
+                                </ul>
+                            </li>
+                            <hr>
+                          {% endfor %}
+                      </div>
+                  </div>
+              </ul>
+            </div>
+          </div>
+      </div>
+</div>
+
+{% endblock %}
