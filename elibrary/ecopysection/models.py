@@ -4,9 +4,9 @@ from django.db import models
 
 
 class ECopies(models.Model):
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=100,)
     description = models.TextField(blank=True, null=True)
-    author = models.CharField(max_length=100, blank=True, null=True)
+    author = models.CharField(max_length=100,)
     department_choices = (
         ('Biotechnology', 'Biotechnology'),
         ('Civil Engineering', 'Civil Engineering'),
@@ -29,7 +29,7 @@ class ECopies(models.Model):
         ('Reference Book', 'Reference Book'),
         ('Others', 'Others'),
     )
-    type = models.CharField(max_length=100, choices=department_choices, blank=True, null=True)
+    type = models.CharField(max_length=100, choices=type_choices, blank=True, null=True)
     external_link = models.URLField()
     # TODO
     # AUTOGENERATE DATETIME
